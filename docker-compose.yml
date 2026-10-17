@@ -1,0 +1,10 @@
+  db:
+    image: postgres:16
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: trader
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: trading
+    volumes:
+      - pgdata:/var/lib/postgresql/data

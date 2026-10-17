@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+frontend/dist/
+frontend/build/
+*.log
+*.sqlite3
+data/raw/
+.vscode/
+.idea/
+.DS_Store
