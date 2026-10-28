@@ -1,17 +1,25 @@
-import './css/App.css'
-import { Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-import SignIn from './authentication/SignIn'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import LogIn from './authentication/LogIn'
+import SignIn from './authentication/SignIn'
+import ForgotPassword from './authentication/ForgotPassword'
+import ResetPassword from './authentication/ResetPassword'
+import VerifyCode from './authentication/VerifyCode'
+import Home from './pages/Home'
 
-function App() {
+function Private({ children }) {
+  return localStorage.getItem('token') ? children : <Navigate to="/login" replace />
+}
+
+export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/inscription" element={<SignIn />} />
-      <Route path="/connexion" element={<LogIn />} />
+      <Route path="/login" element={<LogIn />} />
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/" element={<Home />}/>
+      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/verify-code" element={<VerifyCode />} />
     </Routes>
   )
 }
-
-export default App

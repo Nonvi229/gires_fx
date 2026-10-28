@@ -1,4 +1,31 @@
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
+:root {
+  --gold: #d4af37;
+  --gold-light: #f5d77a;
+  --gold-dark: #a8871f;
+  --text-dim: rgba(255, 255, 255, 0.7);
+
+  --bg: #07080b;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --border: rgba(212, 175, 55, 0.25);
+  --green: #2ecc8f;
+  --red: #ff5c6c;
+  --radius: 16px;
+  --font-title: 'Playfair Display', Georgia, serif;
 }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a { color: var(--gold-light); text-decoration: none; transition: color .2s; }
+a:hover { color: var(--gold); }
+
+::selection { background: var(--gold); color: #000; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 8px; }
