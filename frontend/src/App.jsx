@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react'
+import './css/App.css'
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import SignIn from './authentication/SignIn'
+import LogIn from './authentication/LogIn'
 
 function App() {
-  const [status, setStatus] = useState('chargement...')
-
-  useEffect(() => {
-    fetch('/api/say_hello/')
-      .then((res) => res.json())
-      .then((data) => setStatus(data.status))
-      .catch(() => setStatus('API injoignable'))
-  }, [])
-
-  return <h1>État de l'API : {status}</h1>
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/inscription" element={<SignIn />} />
+      <Route path="/connexion" element={<LogIn />} />
+    </Routes>
+  )
 }
 
 export default App
