@@ -1,14 +1,23 @@
 from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# racine du projet : api/app/core/config.py -> parents[3]
-ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
+# api/app/core/config.py  →  parents[2] = dossier api/
+BASE_DIR = Path(__file__).resolve().parents[2]
 
 
 class Settings(BaseSettings):
-    database_url: str
+    model_config = SettingsConfigDict(
+        env_file=(BASE_DIR.parent / ".env", BASE_DIR / ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
-    model_config = SettingsConfigDict(env_file=ENV_FILE, extra="ignore")
+    database_url: str
+    secret_key: str
+    frontend_origin: str = "http://localhost:5173"
+    code_expire_minutes: int = 10
+    code_max_attempts: int = 5
 
 
 settings = Settings()

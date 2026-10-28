@@ -1,3 +1,4 @@
+import uuid
 import enum
 from datetime import datetime
 from sqlalchemy import DateTime, Enum, ForeignKey, String, UniqueConstraint
@@ -16,12 +17,12 @@ class VerificationCode(Base):
     __tablename__ = "verification_codes"
     __table_args__ = (UniqueConstraint("user_id", "purpose", name="uq_user_purpose"),)
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("traders.id", ondelete="CASCADE"), index=True
     )
     purpose: Mapped[CodePurpose] = mapped_column(Enum(CodePurpose, name="code_purpose"))
     code_hash: Mapped[str] = mapped_column(String(255))
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     attempts: Mapped[int] = mapped_column(default=0)
-    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

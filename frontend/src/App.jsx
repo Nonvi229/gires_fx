@@ -16,10 +16,10 @@ export default function App() {
       <Route path="/login" element={<LogIn />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/" element={<Home />}/>
-      <Route path="*" element={<Navigate to="/" replace />} />
       <Route path="/verify-code" element={<VerifyCode />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/" element={<Private><Home /></Private>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }

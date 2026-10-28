@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import Background, { Logo } from '../components/Background'
 import { api } from '../js/api'
+import PasswordField from '../components/PasswordField'
 
 export default function ResetPassword() {
   const [params] = useSearchParams()
@@ -34,10 +35,12 @@ export default function ResetPassword() {
           <Logo title="Nouveau mot de passe"/>
           <p className="sub">Choisissez un mot de passe sécurisé</p>
           {status.text && <div className={`msg ${status.type}`}>{status.text}</div>}
-          <div className="field"><label>Nouveau mot de passe</label>
-            <input type="password" minLength={8} required value={password} onChange={(e) => setPassword(e.target.value)} /></div>
-          <div className="field"><label>Confirmer</label>
-            <input type="password" required value={confirm} onChange={(e) => setConfirm(e.target.value)} /></div>
+          <PasswordField label="Nouveau mot de passe" value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password" minLength={8} required />
+          <PasswordField label="Confirmer" value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            autoComplete="new-password" required />
           <button className="btn-gold" disabled={loading}>
             {loading ? <span className="spinner" /> : 'Réinitialiser'}
           </button>

@@ -9,6 +9,7 @@ export default function VerifyCode() {
   const nav = useNavigate()
   const [params] = useSearchParams()
   const email = params.get('email') || ''
+  const purpose = params.get('purpose') || 'reset'
 
   const [digits, setDigits] = useState(Array(LENGTH).fill(''))
   const [status, setStatus] = useState({ type: '', text: '' })
@@ -61,8 +62,13 @@ export default function VerifyCode() {
     setLoading(true)
     setStatus({ type: '', text: '' })
     try {
-      const { token } = await api.verifyCode(email, code)
-      nav(`/reset-password?token=${encodeURIComponent(token)}`)
+      if (purpose === 'signup') {
+        await api.verifyEmail(email, code)
+        nav('/login', { state: { message: 'Compte activé. Vous pouvez vous connecter.' } })
+      } else {
+        const { token } = await api.verifyCode(email, code)
+        nav(`/reset-password?token=${encodeURIComponent(token)}`)
+      }
     } catch (err) {
       setStatus({ type: 'error', text: err.message || 'Code invalide' })
       setShake(true)
@@ -77,7 +83,7 @@ export default function VerifyCode() {
   async function resend() {
     if (cooldown > 0) return
     try {
-      await api.forgot(email)
+      await (purpose === 'signup' ? api.resendCode(email) : api.forgot(email))
       setStatus({ type: 'ok', text: 'Un nouveau code vient d’être envoyé.' })
       setCooldown(30)
     } catch (err) {
@@ -123,7 +129,7 @@ export default function VerifyCode() {
             <button type="button" className="link-btn" onClick={resend} disabled={cooldown > 0}>
               {cooldown > 0 ? `Renvoyer le code (${cooldown}s)` : 'Renvoyer le code'}
             </button>
-            <Link to="/forgot-password">Changer d’email</Link>
+            <Link to={purpose === 'signup' ? '/signin' : '/forgot-password'}>Changer d’email</Link>
           </div>
         </form>
       </div>

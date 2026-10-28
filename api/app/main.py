@@ -1,7 +1,18 @@
 from fastapi import FastAPI
-from app.core.database import Base, engine
-import app.models
+from fastapi.middleware.cors import CORSMiddleware
 
-Base.metadata.create_all(bind=engine)
+from app.core.config import settings
+from app.routers import auth, trades
 
-app = FastAPI(title="Gires FX API")
+app = FastAPI(title="GIRES FX API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[settings.frontend_origin],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth.router, prefix="/api")
+#app.include_router(trades.router, prefix="/api")

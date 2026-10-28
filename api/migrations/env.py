@@ -9,15 +9,13 @@ from app.core.config import settings
 from app.core.database import Base
 import app.models  # noqa: F401  (enregistre les modèles dans Base.metadata)
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+# Objet de configuration Alembic (valeurs du fichier .ini)
 config = context.config
 
-# URL de la base lue depuis le .env (via settings)
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# URL de la base lue depuis le .env (le % est échappé pour configparser)
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
+# Configuration des logs
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
@@ -32,6 +30,8 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        compare_type=True,
+        render_as_batch=url.startswith("sqlite"),
     )
 
     with context.begin_transaction():
@@ -47,7 +47,10 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            compare_type=True,
+            render_as_batch=connection.dialect.name == "sqlite",
         )
 
         with context.begin_transaction():
