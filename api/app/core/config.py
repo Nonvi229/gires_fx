@@ -16,8 +16,15 @@ class Settings(BaseSettings):
     database_url: str
     secret_key: str
     frontend_origin: str = "http://localhost:5173"
-    code_expire_minutes: int = 10
-    code_max_attempts: int = 5
+    code_expire_minutes: int = 3
+    code_max_attempts: int = 3
+
+    # SMTP (vide en développement : l'email s'affiche dans le terminal)
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = "no-reply@gires-fx.local"
 
 
 settings = Settings()

@@ -66,8 +66,8 @@ export default function VerifyCode() {
         await api.verifyEmail(email, code)
         nav('/login', { state: { message: 'Compte activé. Vous pouvez vous connecter.' } })
       } else {
-        const { token } = await api.verifyCode(email, code)
-        nav(`/reset-password?token=${encodeURIComponent(token)}`)
+        const { token } = await api.verifyEmail(email, code)
+        nav('/login', { state: { message: 'Votre mot de passe a été changé. Vous pouvez vous connecter.' } })
       }
     } catch (err) {
       setStatus({ type: 'error', text: err.message || 'Code invalide' })

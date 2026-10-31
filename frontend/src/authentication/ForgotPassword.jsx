@@ -31,7 +31,7 @@ export default function ForgotPassword() {
         <form className="auth-card" onSubmit={onSubmit}>
           <Logo />
           <h1>Mot de passe oublié</h1>
-          <p className="sub">Entrez votre email pour recevoir un lien</p>
+          <p className="sub">Entrez votre email pour recevoir un code de réinitialisation</p>
           {status.text && <div className={`msg ${status.type}`}>{status.text}</div>}
           <div className="field"><label>Email</label>
             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>

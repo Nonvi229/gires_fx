@@ -5,7 +5,7 @@ from app.core.database import get_db
 from app.schemas.auth import MessageOut, RegisterIn, VerifyEmailIn, ResendIn
 from app.services import auth_service
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["Trader Fonctionnalités"])
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=MessageOut)
@@ -18,6 +18,11 @@ def register(data: RegisterIn, db: Session = Depends(get_db)):
 def verify_email(data: VerifyEmailIn, db: Session = Depends(get_db)):
     auth_service.verify_email(db, data)
     return {"message": "Compte activé"}
+
+@router.post("/verify-code", response_model=MessageOut)
+def verify_email(data: VerifyEmailIn, db: Session = Depends(get_db)):
+    auth_service.verify_email(db, data)
+    return {"message": "Mot de passe modifié avec succès"}
 
 @router.post("/resend-code", response_model=MessageOut)
 def resend_code(data: ResendIn, db: Session = Depends(get_db)):
