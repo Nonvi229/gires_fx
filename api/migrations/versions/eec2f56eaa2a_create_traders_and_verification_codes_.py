@@ -56,3 +56,5 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_traders_email'), table_name='traders')
     op.drop_table('traders')
     # ### end Alembic commands ###
+    # Le type enum n'est pas supprimé avec la table : on le retire explicitement
+    op.execute("DROP TYPE IF EXISTS code_purpose")

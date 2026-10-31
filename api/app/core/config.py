@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # api/app/core/config.py  →  parents[2] = dossier api/
@@ -14,17 +14,16 @@ class Settings(BaseSettings):
     )
 
     database_url: str
-    secret_key: str
     frontend_origin: str = "http://localhost:5173"
-    code_expire_minutes: int = 3
-    code_max_attempts: int = 3
-
-    # SMTP (vide en développement : l'email s'affiche dans le terminal)
     smtp_host: str = ""
     smtp_port: int = 587
     smtp_user: str = ""
     smtp_password: str = ""
     smtp_from: str = "no-reply@gires-fx.local"
+    jwt_algorithm: str = "HS256"
+    secret_key: str = Field(min_length=32)
+    code_max_attempts: int = Field(default=3, ge=1)
+    code_expire_minutes: int = Field(default=3, ge=1)
 
 
 settings = Settings()

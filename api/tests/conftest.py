@@ -5,6 +5,8 @@ import pytest
 from dotenv import dotenv_values
 from sqlalchemy import text
 from sqlalchemy.engine import make_url
+import re
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[2]  # racine du projet (là où est .env)
 
@@ -58,3 +60,21 @@ def db(_schema):
 @pytest.fixture
 def client(_schema):
     return TestClient(app)
+
+@pytest.fixture
+def mailbox(monkeypatch):
+    """Intercepte les emails : on lit les codes ici au lieu du terminal."""
+    box = SimpleNamespace(verification=[], already=[], reset=[])
+    monkeypatch.setattr(
+        "app.services.auth_service.send_verification_email",
+        lambda email, code: box.verification.append((email, code)),
+    )
+    monkeypatch.setattr(
+        "app.services.auth_service.send_already_registered_email",
+        lambda email: box.already.append(email),
+    )
+    monkeypatch.setattr(
+        "app.routers.password_reset.send_email",
+        lambda to, subject, body: box.reset.append((to, re.search(r"\b\d{5}\b", body).group())),
+    )
+    return box

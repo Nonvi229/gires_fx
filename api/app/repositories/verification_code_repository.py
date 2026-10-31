@@ -28,12 +28,14 @@ class VerificationCodeRepository:
         code_hash: str,
         expires_at: datetime,
         now: datetime,
-        cooldown: timedelta,
+        cooldown: timedelta | None,
     ) -> bool:
         """Crée ou remplace le code, SAUF si le dernier envoi date de moins de `cooldown`.
 
-        Une seule instruction SQL : le délai minimum entre deux envois est donc
-        respecté même avec des requêtes simultanées. Retourne True si un code a été émis.
+        `cooldown=None` : remplacement sans délai minimum (ex. reprise d'une inscription).
+        Une seule instruction SQL : le délai est respecté même avec des requêtes simultanées.
+        Commit inclus : il valide aussi les changements déjà en attente dans la session
+        (par exemple le trader créé juste avant). Retourne True si un code a été émis.
         """
         stmt = pg_insert(VerificationCode).values(
             user_id=user_id,
@@ -51,7 +53,7 @@ class VerificationCodeRepository:
                 "attempts": 0,
                 "created_at": stmt.excluded.created_at,
             },
-            where=VerificationCode.created_at <= now - cooldown,
+            where=None if cooldown is None else VerificationCode.created_at <= now - cooldown,
         )
         row = self.db.execute(stmt.returning(VerificationCode.id)).first()
         self.db.commit()

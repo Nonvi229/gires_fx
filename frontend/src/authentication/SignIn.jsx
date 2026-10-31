@@ -21,7 +21,7 @@ export default function SignIn() {
       await api.register(form.name, form.surname, form.email, form.password)
       console.log('Inscription OK, redirection vers la vérification')
       nav(`/verify-code?email=${encodeURIComponent(form.email)}&purpose=signup`, {
-        state: { message: 'Compte créé ! Un code à 5 chiffres vous a été envoyé par email.' },
+        state: { message: 'Si l’adresse est valide, un code à 5 chiffres vient d’être envoyé par email.' },
       })
     } catch (err) {
       setError(err.message)

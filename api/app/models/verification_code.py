@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import DateTime, Enum, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
-from app.models.trader import utcnow
+from app.core.clock import utcnow
 
 
 class CodePurpose(str, enum.Enum):

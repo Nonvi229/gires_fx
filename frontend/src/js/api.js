@@ -31,16 +31,17 @@ async function request(path, { method = "GET", body } = {}) {
 }
 
 export const api = {
-  // Authentification
   login: (email, password) => request("/auth/login", { method: "POST", body: { email, password } }),
   register: (name, surname, email, password) => request("/auth/register", { method: "POST", body: { name, surname, email, password } }),
-  // Vérification par code (inscription)
   verifyEmail: (email, code) => request("/auth/verify-email", { method: "POST", body: { email, code } }),
   resendCode: (email) => request("/auth/resend-code", { method: "POST", body: { email } }),
-  // Mot de passe oublié
+
+  // Mot de passe oublié : 3 étapes
   forgot: (email) => request("/auth/forgot-password", { method: "POST", body: { email } }),
-  reset: (token, password) => request("/auth/reset-password", { method: "POST", body: { token, password } }),
-  // Appels génériques
+  verifyResetCode: (email, code) => request("/auth/verify-reset-code", { method: "POST", body: { email, code } }), // -> { token }
+  resetPassword: (token, newPassword) => request("/auth/reset-password", { method: "POST", body: { token, new_password: newPassword } }),
+
   get: (path) => request(path),
   post: (path, body) => request(path, { method: "POST", body }),
+  me: () => request("/auth/me"),
 };

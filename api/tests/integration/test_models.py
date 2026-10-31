@@ -76,3 +76,24 @@ def test_codes_are_deleted_with_their_trader(db):
     db.commit()
 
     assert db.query(VerificationCode).count() == 0
+
+EMAIL = "jane@example.com"
+PAYLOAD = {"name": "Jane", "surname": "Doe", "email": EMAIL, "password": "Passw0rd!x"}
+
+def test_register_answers_identically_for_new_and_existing(client, db, monkeypatch):
+    sent = []
+    monkeypatch.setattr("app.services.auth_service.send_verification_email",
+                        lambda to, code: sent.append(("code", to)))
+    monkeypatch.setattr("app.services.auth_service.send_already_registered_email",
+                        lambda to: sent.append(("reminder", to)))
+
+    first = client.post("/api/auth/register", json=PAYLOAD)
+    trader = db.query(Trader).one()
+    trader.is_verified = True          # le compte est maintenant vérifié
+    db.commit()
+
+    second = client.post("/api/auth/register", json=PAYLOAD)
+
+    assert first.status_code == second.status_code == 201
+    assert first.json() == second.json()                 # aucune différence visible
+    assert sent == [("code", EMAIL), ("reminder", EMAIL)]

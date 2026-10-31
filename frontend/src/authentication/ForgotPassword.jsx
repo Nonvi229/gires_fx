@@ -4,9 +4,8 @@ import Background, { Logo } from '../components/Background'
 import { api } from '../js/api'
 
 export default function ForgotPassword() {
-
   const nav = useNavigate()
-  
+
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState({ type: '', text: '' })
   const [loading, setLoading] = useState(false)
@@ -16,7 +15,9 @@ export default function ForgotPassword() {
     setLoading(true); setStatus({ type: '', text: '' })
     try {
       await api.forgot(email)
-      nav(`/verify-code?email=${encodeURIComponent(email)}`)
+      nav(`/verify-code?email=${encodeURIComponent(email)}&purpose=reset`, {
+        state: { message: 'Si ce compte existe, un code à 5 chiffres vient d’être envoyé par email.' },
+      })
     } catch (err) {
       setStatus({ type: 'error', text: err.message })
     } finally {

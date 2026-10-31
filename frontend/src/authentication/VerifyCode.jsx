@@ -1,21 +1,26 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import Background, { Logo } from '../components/Background'
 import { api } from '../js/api'
 
 const LENGTH = 5
+const COOLDOWN = { signup: 30, reset: 60 } // aligné sur les cooldowns du backend
 
 export default function VerifyCode() {
   const nav = useNavigate()
+  const location = useLocation()
   const [params] = useSearchParams()
   const email = params.get('email') || ''
-  const purpose = params.get('purpose') || 'reset'
+  const purpose = params.get('purpose') === 'signup' ? 'signup' : 'reset'
+  const cooldownSeconds = COOLDOWN[purpose]
 
   const [digits, setDigits] = useState(Array(LENGTH).fill(''))
-  const [status, setStatus] = useState({ type: '', text: '' })
+  const [status, setStatus] = useState(
+    location.state?.message ? { type: 'ok', text: location.state.message } : { type: '', text: '' }
+  )
   const [loading, setLoading] = useState(false)
   const [shake, setShake] = useState(false)
-  const [cooldown, setCooldown] = useState(30)
+  const [cooldown, setCooldown] = useState(cooldownSeconds)
   const refs = useRef([])
 
   const code = digits.join('')
@@ -66,8 +71,9 @@ export default function VerifyCode() {
         await api.verifyEmail(email, code)
         nav('/login', { state: { message: 'Compte activé. Vous pouvez vous connecter.' } })
       } else {
-        const { token } = await api.verifyEmail(email, code)
-        nav('/login', { state: { message: 'Votre mot de passe a été changé. Vous pouvez vous connecter.' } })
+        const { token } = await api.verifyResetCode(email, code)
+        // Le token passe par le state de navigation : il n'apparaît pas dans l'URL
+        nav('/reset-password', { state: { token }, replace: true })
       }
     } catch (err) {
       setStatus({ type: 'error', text: err.message || 'Code invalide' })
@@ -85,7 +91,7 @@ export default function VerifyCode() {
     try {
       await (purpose === 'signup' ? api.resendCode(email) : api.forgot(email))
       setStatus({ type: 'ok', text: 'Un nouveau code vient d’être envoyé.' })
-      setCooldown(30)
+      setCooldown(cooldownSeconds)
     } catch (err) {
       setStatus({ type: 'error', text: err.message })
     }

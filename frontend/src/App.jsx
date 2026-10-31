@@ -5,9 +5,21 @@ import ForgotPassword from './authentication/ForgotPassword'
 import ResetPassword from './authentication/ResetPassword'
 import VerifyCode from './authentication/VerifyCode'
 import Home from './pages/Home'
+import { useEffect, useState } from 'react'
+import { api } from './js/api'
 
 function Private({ children }) {
-  return localStorage.getItem('token') ? children : <Navigate to="/login" replace />
+  const [state, setState] = useState(localStorage.getItem('token') ? 'checking' : 'denied')
+
+  useEffect(() => {
+    if (state !== 'checking') return
+    api.me()
+      .then(() => setState('ok'))
+      .catch(() => { localStorage.removeItem('token'); setState('denied') })
+  }, [state])
+
+  if (state === 'checking') return null
+  return state === 'ok' ? children : <Navigate to="/login" replace />
 }
 
 export default function App() {

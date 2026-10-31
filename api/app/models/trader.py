@@ -3,9 +3,7 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
 from sqlalchemy import DateTime, String
-
-def utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+from app.core.clock import utcnow
 
 
 class Trader(Base):
