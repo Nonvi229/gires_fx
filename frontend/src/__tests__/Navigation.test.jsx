@@ -27,7 +27,8 @@ describe('routes protégées', () => {
         ['/settings', 'Paramètres'],
     ])('%s affiche la page « %s » dans le menu', async (path, title) => {
         show(path)
-        expect(await screen.findByRole('heading', { name: title })).toBeInTheDocument()
+        expect(await screen.findByRole('heading', { level: 2, name: title })).toBeInTheDocument()   // titre de la page
+        expect(screen.getByRole('heading', { level: 1, name: title })).toBeInTheDocument()          // titre dans l'en-tête
         expect(screen.getByRole('navigation', { name: 'Menu principal' })).toBeInTheDocument()
     })
 

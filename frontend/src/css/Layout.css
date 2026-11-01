@@ -13,7 +13,7 @@
   position: sticky;
   top: 16px;
   height: calc(100dvh - 32px);
-  margin: 5px 0 16px;
+  margin: 16px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -287,34 +287,6 @@
   font-size: .85rem;
 }
 
-.master {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-family: inherit;
-  font-size: .82rem;
-  color: var(--ice);
-  background: rgba(159, 196, 255, .08);
-  border: 1px solid var(--line);
-  cursor: pointer;
-  transition: background .2s, border-color .2s;
-}
-
-.master:hover {
-  background: rgba(159, 196, 255, .14);
-}
-
-.master.off {
-  color: var(--text-dim);
-}
-
-.master.on .dot {
-  background: var(--green);
-  box-shadow: 0 0 10px var(--green);
-}
-
 .tabbar {
   display: none;
 }
@@ -389,13 +361,6 @@
 
   .topbar .logo-link {
     flex: none;
-  }
-
-  .master {
-    padding: 6px 10px;
-    font-size: .74rem;
-    white-space: nowrap;
-    gap: 8px;
   }
 
   .tabbar {
@@ -485,7 +450,7 @@
   }
 
   .card {
-    padding: 16px;
+    padding: 10px;
     overflow-x: auto;
   }
 
@@ -507,4 +472,21 @@
   .ticker-track {
     gap: 24px;
   }
+}
+
+/* Titre de page dans l'en-tête */
+.topbar__title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  /* sur petit écran : la croix seule, pour laisser la place au titre */
+  .topbar .logo span { display: none; }
 }

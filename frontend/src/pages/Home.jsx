@@ -1,10 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import PerformanceChart from '../components/PerformanceChart'
+import { loadDashboard } from '../js/mockHome'
+import { fmtMoney, fmtPct, fmtPctSigned, fmtSigned, rankAlgorithms, tone } from '../js/homeStats'
+import '../css/Home.css'
+import EnginePanel from '../components/EnginePanel'
+import { useEngine } from '../js/engine'
 
-// Compteur animé
-function useCountUp(target, duration = 1500) {
+const reducedMotion = () =>
+  typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+
+// Compteur animé (désactivé si l'utilisateur réduit les animations)
+function useCountUp(target, duration = 1200) {
+  const reduced = reducedMotion()
   const [v, setV] = useState(0)
   useEffect(() => {
+    if (reduced) return
     let raf, start
     const step = (t) => {
       start ??= t
@@ -14,92 +25,128 @@ function useCountUp(target, duration = 1500) {
     }
     raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
-  }, [target, duration])
-  return v
+  }, [target, duration, reduced])
+  return reduced ? target : v
 }
 
-const pairs = [
-  ['BTC/USDT', '67 420', 1.8], ['ETH/USDT', '3 215', -0.6], ['EUR/USD', '1.0842', 0.2],
-  ['XAU/USD', '2 391', 0.9], ['SOL/USDT', '172', 3.1], ['NAS100', '18 240', -0.3],
-]
+function StatCard({ label, value, signed = false, index, className = '' }) {
+  const shown = useCountUp(value)
+  return (
+    <section className={`card stat rise ${className}`} style={{ '--i': index }} aria-label={label}>
+      <h3>{label}</h3>
+      <div className={`stat__value ${signed ? tone(value) : ''}`}>
+        {signed ? fmtSigned(shown) : fmtMoney(shown)}
+      </div>
+    </section>
+  )
+}
 
-const trades = [
-  { pair: 'BTC/USDT', side: 'BUY', pnl: 124.5, time: '10:42' },
-  { pair: 'XAU/USD', side: 'SELL', pnl: -32.1, time: '10:15' },
-  { pair: 'ETH/USDT', side: 'BUY', pnl: 58.9, time: '09:50' },
-  { pair: 'EUR/USD', side: 'BUY', pnl: 21.3, time: '09:12' },
-]
+function AssetRow({ asset, algoNames }) {
+  const { symbol, invested, pnl, dayPnl, algorithms } = asset
+  return (
+    <li>
+      <Link className="asset-row" to={`/assets/${encodeURIComponent(symbol)}`}>
+        <div>
+          <span className="asset-name">{symbol}</span>
+          <span className="badges">
+            {algorithms.map((id) => (
+              <span className="badge" key={id}>{algoNames[id] ?? id}</span>
+            ))}
+          </span>
+        </div>
+        <div className="pnl">
+          <b className={tone(pnl)}>{fmtSigned(pnl)}</b>
+          <small>{invested ? fmtPctSigned(pnl / invested) : '—'}</small>
+          <small>Jour : {dayPnl === 0 ? '—' : <span className={tone(dayPnl)}>{fmtSigned(dayPnl)}</span>}</small>
+        </div>
+      </Link>
+    </li>
+  )
+}
 
-const BALANCE = 12480.55
 export default function Home() {
-  const [botOn, setBotOn] = useState(true)
-  const balance = useCountUp(BALANCE)
-  const profit = useCountUp(1832.4)
-  const winrate = useCountUp(68.4)
+  const [data, setData] = useState(null)
+  const [error, setError] = useState('')
 
-  const ticker = [...pairs, ...pairs]
+  const engine = useEngine()
+  const activeCount = useMemo(
+    () => (data ? new Set(data.assets.flatMap((a) => a.algorithms)).size : 0),
+    [data]
+  )
+
+  useEffect(() => {
+    let alive = true
+    loadDashboard()
+      .then((d) => alive && setData(d))
+      .catch((e) => alive && setError(e.message || 'Impossible de charger le tableau de bord.'))
+    return () => { alive = false }
+  }, [])
+
+  const best = useMemo(
+    () => (data ? rankAlgorithms(data.algorithms).find((a) => a.rank === 1) : undefined),
+    [data]
+  )
+  const algoNames = useMemo(
+    () => Object.fromEntries((data?.algorithms ?? []).map((a) => [a.id, a.name])),
+    [data]
+  )
+
+  if (error) return <p role="alert" className="home-state down">{error}</p>
+  if (!data) return <p role="status" className="home-state">Chargement…</p>
+
+  const { balance, today, totals, assets } = data
 
   return (
-    <>
-      <div className="ticker">
-        <div className="ticker-track">
-          {ticker.map(([p, price, ch], i) => (
-            <span key={i}>
-              {p} <b>{price}</b>{' '}
-              <span className={ch >= 0 ? 'up' : 'down'}>{ch >= 0 ? '▲' : '▼'} {Math.abs(ch)}%</span>
-            </span>
-          ))}
-        </div>
+    <div className="dash home">
+      <EnginePanel
+        running={engine.running}
+        haltedAt={engine.haltedAt}
+        activeCount={activeCount}
+        lastTradeAt={data.lastTradeAt}
+        onStop={engine.stop}
+        onResume={engine.resume}
+      />
+      <div className="stat-row">
+        <StatCard className="stat--balance" label="Solde actuel" value={balance} index={0} />
+        <StatCard label="Gain du jour" value={today.gain} signed index={1} />
+        <StatCard label="Perte du jour" value={today.loss} signed index={2} />
       </div>
 
-      <main className="dash">
-        <div className="grid">
-          <div className="card" style={{ animationDelay: '.05s' }}>
-            <h3>Solde</h3>
-            <div className="big">${balance.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}</div>
-          </div>
-          <div className="card" style={{ animationDelay: '.15s' }}>
-            <h3>Profit du mois</h3>
-            <div className="big up">+${profit.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}</div>
-          </div>
-          <div className="card" style={{ animationDelay: '.25s' }}>
-            <h3>Taux de réussite</h3>
-            <div className="big">{winrate.toFixed(1)}%</div>
-          </div>
-          <div className="card" style={{ animationDelay: '.35s' }}>
-            <h3>Algorithme</h3>
-            <div className="bot-status">
-              <span className={`dot ${botOn ? 'on' : ''}`} />
-              <span>{botOn ? 'Actif' : 'À l’arrêt'}</span>
-            </div>
-            <button className="btn-gold" style={{ marginTop: 14 }} onClick={() => setBotOn(!botOn)}>
-              {botOn ? 'Arrêter' : 'Démarrer'}
-            </button>
-          </div>
-        </div>
+      <div className="rise" style={{ '--i': 3 }}>
+        <PerformanceChart balance={balance} />
+      </div>
 
-        <div className="card chart-card" style={{ animationDelay: '.45s' }}>
-          <h3>Performance</h3>
-          <PerformanceChart balance={BALANCE} />
-        </div>
+      <section className="card rise" style={{ '--i': 4 }} aria-label="Actifs tradés">
+        <h3>Actifs tradés</h3>
+        <ul className="asset-list">
+          {assets.map((a) => <AssetRow key={a.symbol} asset={a} algoNames={algoNames} />)}
+        </ul>
+      </section>
 
-        <div className="card" style={{ animationDelay: '.55s' }}>
-          <h3>Derniers trades</h3>
-          <table>
-            <thead><tr><th>Paire</th><th>Sens</th><th>P&amp;L</th><th>Heure</th></tr></thead>
-            <tbody>
-              {trades.map((t, i) => (
-                <tr key={i}>
-                  <td>{t.pair}</td>
-                  <td className={t.side === 'BUY' ? 'up' : 'down'}>{t.side}</td>
-                  <td className={t.pnl >= 0 ? 'up' : 'down'}>{t.pnl >= 0 ? '+' : ''}{t.pnl}</td>
-                  <td>{t.time}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
-    </>
+      <div className="home-peek">
+        <section className="card peek rise" style={{ '--i': 5 }} aria-label="Meilleur algorithme">
+          <h3>Meilleur algorithme</h3>
+          {best ? (
+            <>
+              <Link className="peek__title" to={`/algorithms/${best.id}`}>{best.name}</Link>
+              <div className={`stat__value ${tone(best.netProfit)}`}>{fmtSigned(best.netProfit)}</div>
+              <div className="peek__hint">Réussite {fmtPct(best.winRate)} · {best.trades} trades</div>
+            </>
+          ) : (
+            <p className="peek__hint">Pas encore assez de trades pour établir un classement.</p>
+          )}
+          <Link className="peek__more" to="/algorithms">Voir le classement </Link>
+        </section>
+
+        <section className="card peek rise" style={{ '--i': 6 }} aria-label="Bilan global">
+          <h3>Bilan global</h3>
+          <div className="peek__lines">
+            <div><span>Gains totaux</span><b className="up">{fmtSigned(totals.gains)}</b></div>
+            <div><span>Pertes totales</span><b className="down">{fmtSigned(totals.losses)}</b></div>
+          </div>
+          <Link className="peek__more" to="/stats">Voir les statistiques </Link>
+        </section>
+      </div>
+    </div>
   )
 }

@@ -59,21 +59,9 @@ describe('Layout : menu', () => {
         const { container } = show()
         const sidebar = within(container.querySelector('.sidebar'))
         await user.click(sidebar.getByRole('button', { name: 'Déconnexion' }))
+        await user.click(screen.getByRole('button', { name: 'Se déconnecter' }))
         expect(localStorage.getItem('token')).toBeNull()
         expect(await screen.findByTestId('probe')).toHaveTextContent('/login')
-    })
-})
-
-describe('Layout : interrupteur global', () => {
-    it('bascule entre actifs et en pause', async () => {
-        const user = userEvent.setup()
-        show()
-        const sw = screen.getByRole('switch')
-        expect(sw).toBeChecked()
-        expect(sw).toHaveTextContent('Algorithmes actifs')
-        await user.click(sw)
-        expect(sw).not.toBeChecked()
-        expect(sw).toHaveTextContent('Algorithmes en pause')
     })
 })
 
