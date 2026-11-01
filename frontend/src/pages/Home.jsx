@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Background, { Logo } from '../components/Background'
+import PerformanceChart from '../components/PerformanceChart'
 
 // Compteur animé
 function useCountUp(target, duration = 1500) {
@@ -31,25 +30,17 @@ const trades = [
   { pair: 'EUR/USD', side: 'BUY', pnl: 21.3, time: '09:12' },
 ]
 
+const BALANCE = 12480.55
 export default function Home() {
-  const nav = useNavigate()
   const [botOn, setBotOn] = useState(true)
-  const balance = useCountUp(12480.55)
+  const balance = useCountUp(BALANCE)
   const profit = useCountUp(1832.4)
   const winrate = useCountUp(68.4)
 
-  const logout = () => { localStorage.removeItem('token'); nav('/login') }
   const ticker = [...pairs, ...pairs]
 
   return (
     <>
-      <Background />
-
-      <header className="topbar">
-        <Logo />
-        <button className="btn-ghost" onClick={logout}>Déconnexion</button>
-      </header>
-
       <div className="ticker">
         <div className="ticker-track">
           {ticker.map(([p, price, ch], i) => (
@@ -89,18 +80,7 @@ export default function Home() {
 
         <div className="card chart-card" style={{ animationDelay: '.45s' }}>
           <h3>Performance</h3>
-          <svg viewBox="0 0 800 220" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor="#d4af37" stopOpacity=".35" />
-                <stop offset="1" stopColor="#d4af37" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <path d="M0 190 C80 170 120 195 200 140 S340 150 420 100 S560 110 640 60 S740 40 800 20 V220 H0Z"
-                  fill="url(#area)" />
-            <path className="curve" fill="none" stroke="#f5d77a" strokeWidth="3" strokeLinecap="round"
-                  d="M0 190 C80 170 120 195 200 140 S340 150 420 100 S560 110 640 60 S740 40 800 20" />
-          </svg>
+          <PerformanceChart balance={BALANCE} />
         </div>
 
         <div className="card" style={{ animationDelay: '.55s' }}>

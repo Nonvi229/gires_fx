@@ -1,0 +1,32 @@
+.perf-card { margin-top: 20px; overflow: visible; }
+.perf-card:hover { transform: none; }
+.perf-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.perf-value { font-family: var(--font-title); font-size: 2rem; margin-top: 8px; color: #fff; text-shadow: 0 0 22px rgba(190, 215, 255, .35); }
+.perf-delta { margin-top: 4px; font-size: .9rem; }
+
+.perf-tabs { display: inline-flex; padding: 4px; gap: 2px; border: 1px solid var(--line); border-radius: 999px; background: rgba(3, 7, 14, .5); }
+.perf-tabs button {
+  padding: 7px 14px; border: 0; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: .8rem; color: var(--text-dim); background: none;
+  transition: color .2s, background .2s, box-shadow .2s;
+}
+.perf-tabs button:hover { color: #fff; }
+.perf-tabs button.active { color: #0a1324; font-weight: 600; background: linear-gradient(180deg, #fff, #cfe2ff); box-shadow: 0 0 18px rgba(207, 226, 255, .4); }
+.perf-tabs button:focus-visible { outline: 2px solid var(--halo); outline-offset: 2px; }
+
+.perf-plot { height: 300px; margin-top: 16px; }
+.perf-plot svg { overflow: visible; }
+
+.perf-tip {
+  display: flex; flex-direction: column; gap: 2px; padding: 8px 12px;
+  background: rgba(8, 14, 28, .96); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .5); font-size: .78rem; color: var(--text-dim);
+}
+.perf-tip b { font-size: .95rem; color: #fff; }
+
+@media (max-width: 600px) {
+  .perf-value { font-size: 1.6rem; }
+  .perf-tabs { width: 100%; }
+  .perf-tabs button { flex: 1; padding: 7px 4px; }
+  .perf-plot { height: 220px; }
+}

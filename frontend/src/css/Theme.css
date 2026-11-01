@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Inter:wght@400;500;600&display=swap');
+
+/* ---------- Palette : remplace l'or par la lumière du logo ---------- */
+:root {
+  --night-0: #03060c;
+  --night-1: #070d18;
+  --light: #ffffff;
+  --ice: #cfe2ff;
+  --halo: #9fc4ff;
+  --line: rgba(190, 215, 255, .14);
+
+  /* Variables déjà utilisées par App.css / index.css / PasswordField.css */
+  --gold: #cfe2ff;
+  --gold-light: #ffffff;
+  --gold-dark: #5d7aa6;
+  --text-dim: rgba(205, 220, 245, .62);
+  --bg: #03060c;
+  --bg-card: linear-gradient(180deg, rgba(14, 22, 40, .72), rgba(7, 12, 24, .82));
+  --border: var(--line);
+  --green: #8fe3c0;
+  --red: #ff8d99;
+  --radius: 18px;
+  --font-title: 'Cinzel', Georgia, serif;
+}
+
+body { background: var(--night-0); }
+h1, h2, h3 { font-family: var(--font-title); letter-spacing: .08em; }
+::selection { background: rgba(159, 196, 255, .4); color: #fff; }
+
+/* ---------- Fond (z-index -1 : passe derrière le dashboard aussi) ---------- */
+.bg { z-index: -1; background: var(--night-0); }
+.bg svg { display: block; }
+.bg .star { animation: gf-twinkle 5s ease-in-out infinite; }
+.bg .rays { transform-origin: 700px 226px; animation: gf-rays 9s ease-in-out infinite; }
+.bg .cross { animation: gf-breathe 6s ease-in-out infinite; }
+.bg .fog--a { animation: gf-drift 38s ease-in-out infinite alternate; }
+.bg .fog--b { animation: gf-drift 52s ease-in-out infinite alternate-reverse; }
+
+@keyframes gf-twinkle { 0%, 100% { opacity: .25 } 50% { opacity: 1 } }
+@keyframes gf-rays { 0%, 100% { opacity: .7; transform: rotate(-1.5deg) } 50% { opacity: 1; transform: rotate(1.5deg) } }
+@keyframes gf-breathe { 0%, 100% { opacity: .92 } 50% { opacity: 1 } }
+@keyframes gf-drift { from { transform: translateX(-60px) } to { transform: translateX(60px) } }
+
+/* ---------- Carte d'authentification ---------- */
+.auth-card {
+  max-width: 440px;
+  position: relative;
+  border-radius: 20px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .6), 0 0 70px rgba(159, 196, 255, .07);
+}
+.auth-card::before {
+  content: ''; position: absolute; top: 0; left: 12%; right: 12%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .85), transparent);
+}
+
+.logo {  gap: 6px; }
+.logo__cross {
+  width: 74px; height: 74px;
+  filter: drop-shadow(0 0 14px rgba(190, 215, 255, .7));
+  animation: gf-breathe 5s ease-in-out infinite;
+}
+.logo span {
+  font-size: 1.25rem; font-weight: 600;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: #fff; text-shadow: 0 0 22px rgba(190, 215, 255, .55);
+  text-align: center;
+}
+.logo svg.logo__cross { width: 40px; height: 40px; }
+.auth-card h1 { font-size: 1.15rem; }
+
+/* ---------- Champs ---------- */
+.field label { font-size: .72rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.field input {
+  background: rgba(3, 7, 14, .6);
+  border: 1px solid var(--line);
+}
+.field input:focus {
+  border-color: rgba(207, 226, 255, .65);
+  background: rgba(8, 14, 28, .8);
+  box-shadow: 0 0 0 3px rgba(159, 196, 255, .14), 0 0 22px rgba(159, 196, 255, .12);
+}
+.pwd__toggle:hover, .pwd__toggle[aria-pressed="true"] { color: #fff; background: rgba(159, 196, 255, .12); }
+.pwd__toggle:focus-visible { outline-color: var(--halo); }
+
+/* ---------- Boutons ---------- */
+.btn-gold {
+  color: #0a1324;
+  letter-spacing: .12em; text-transform: uppercase; font-size: .9rem;
+  background: linear-gradient(180deg, #ffffff, #cfe2ff);
+  box-shadow: 0 0 26px rgba(207, 226, 255, .35), inset 0 1px 0 #fff;
+}
+.btn-gold::after { display: none; }                       /* plus de reflet « doré » */
+.btn-gold:hover:not(:disabled) { box-shadow: 0 0 42px rgba(207, 226, 255, .6), inset 0 1px 0 #fff; }
+.btn-gold:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; transform: none; }
+
+.spinner { border-color: rgba(10, 19, 36, .25); border-top-color: #0a1324; }
+
+.btn-ghost { color: var(--ice); }
+.btn-ghost:hover { background: rgba(159, 196, 255, .12); }
+
+a:hover, .link-btn:hover:not(:disabled) { color: #fff; text-shadow: 0 0 12px rgba(207, 226, 255, .8); }
+.link-btn { color: var(--ice); }
+
+/* ---------- Messages ---------- */
+.msg.ok { background: rgba(143, 227, 192, .08); border-color: rgba(143, 227, 192, .3); }
+.msg.error { background: rgba(255, 141, 153, .08); border-color: rgba(255, 141, 153, .3); }
+
+/* ---------- Code OTP ---------- */
+.otp input {
+  color: #fff; caret-color: var(--ice);
+  background: rgba(3, 7, 14, .65);
+  border-color: var(--line);
+}
+.otp input:focus {
+  border-color: rgba(207, 226, 255, .8);
+  box-shadow: 0 0 0 3px rgba(159, 196, 255, .16), 0 0 26px rgba(207, 226, 255, .35);
+}
+
+/* ---------- Dashboard ---------- */
+.topbar { background: rgba(3, 7, 14, .55); }
+.ticker { background: rgba(3, 7, 14, .5); }
+.card {
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .45);
+  position: relative;
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 14%; right: 14%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .55), transparent);
+}
+.card:hover { border-color: rgba(207, 226, 255, .5); box-shadow: 0 18px 50px rgba(0, 0, 0, .45), 0 0 34px rgba(159, 196, 255, .15); }
+.card .big { color: #fff; text-shadow: 0 0 22px rgba(190, 215, 255, .35); }
+td { border-top-color: rgba(190, 215, 255, .08); }
+.dot.on { box-shadow: 0 0 10px var(--green); }
+::-webkit-scrollbar-thumb { background: #2a3b59; }
+/* Le logo de la barre du haut est horizontal et plus petit */
+.topbar .logo { flex-direction: row; gap: 12px; }
+.topbar .logo__cross { width: 34px; height: 34px; }
+.topbar .logo span { font-size: 1rem; letter-spacing: .2em; }
+
+/* Le bouton « Arrêter / Démarrer » de la carte Algorithme */
+.card .btn-gold { letter-spacing: .1em; }
+/* ---------- Mobile ---------- */
+@media (max-width: 600px) {
+  /* Voile plus léger en haut (la croix reste visible), plus sombre en bas (lisibilité) */
+  .bg::after {
+    background: linear-gradient(180deg, rgba(3, 6, 12, .05) 0%, rgba(3, 6, 12, .35) 35%, rgba(3, 6, 12, .82) 70%);
+  }
+  /* Le formulaire se place sous la croix, comme sur l'affiche */
+  .auth-card { justify-content: flex-end; padding-top: 26dvh; }
+  .auth-card::before { display: none; }
+  .logo__cross { width: 56px; height: 56px; }
+  .field input { background: rgba(190, 215, 255, .08); }
+  .field input:focus { border-color: rgba(207, 226, 255, .7); }
+  .auth-card { justify-content: center; padding-top: 32px; }
+}
+
+/* ---------- Accessibilité ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .bg *, .auth-card, .logo__cross { animation: none !important; }
+}
