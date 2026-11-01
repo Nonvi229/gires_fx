@@ -19,7 +19,6 @@ export default function SignIn() {
     setError(''); setLoading(true)
     try {
       await api.register(form.name, form.surname, form.email, form.password)
-      console.log('Inscription OK, redirection vers la vérification')
       nav(`/verify-code?email=${encodeURIComponent(form.email)}&purpose=signup`, {
         state: { message: 'Si l’adresse est valide, un code à 5 chiffres vient d’être envoyé par email.' },
       })

@@ -34,12 +34,13 @@ export default function LogIn() {
       <Background />
       <div className="auth-page">
         <form className="auth-card" onSubmit={onSubmit}>
-          <Logo title="Connectez-vous"/>
+          <Logo title="Connectez-vous" />
           {success && <div className="msg ok">{success}</div>}
           {error && <div className="msg error">{error}</div>}
           <div className="field">
-            <label>Email</label>
-            <input name="email" type="email" required value={form.email} onChange={onChange} />
+            <label htmlFor="email">Email</label>
+            <input id="email" name="email" type="email" autoComplete="email" required
+              value={form.email} onChange={onChange} />
           </div>
           <PasswordField
             label="Mot de passe"

@@ -34,12 +34,16 @@ export default function ForgotPassword() {
           <h1>Mot de passe oublié</h1>
           <p className="sub">Entrez votre email pour recevoir un code de réinitialisation</p>
           {status.text && <div className={`msg ${status.type}`}>{status.text}</div>}
-          <div className="field"><label>Email</label>
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <input id="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
           <button className="btn-gold" disabled={loading}>
             {loading ? <span className="spinner" /> : 'Envoyer le code'}
           </button>
-          <div className="auth-links"><Link to="/login">Retour à la connexion</Link></div>
+          <div className="auth-links">
+            <Link to="/login">Retour à la connexion</Link>
+          </div>
         </form>
       </div>
     </>
