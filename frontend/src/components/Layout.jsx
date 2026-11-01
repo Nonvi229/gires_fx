@@ -121,7 +121,7 @@ export default function Layout() {
                             <Icon d={n.icon} /><span>{n.label}</span>
                         </NavLink>
                     ))}
-                    <button type="button" className="nav-link" onClick={logout}>
+                    <button type="button" className="nav-link" onClick={askLogout}>
                         <Icon d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 8l-4 4 4 4M6 12h10" />
                         <span>Déconnexion</span>
                     </button>

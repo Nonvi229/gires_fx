@@ -62,4 +62,12 @@ describe('Layout : déconnexion avec confirmation', () => {
         expect(await screen.findByText(/vous avez été déconnecté/i)).toBeInTheDocument()
         expect(localStorage.getItem('token')).toBeNull()
     })
+    it('sur mobile, le bouton du menu « Plus » demande aussi confirmation', () => {
+        show()
+        fireEvent.click(screen.getByRole('button', { name: 'Plus' }))
+        const buttons = screen.getAllByRole('button', { name: 'Déconnexion' })
+        fireEvent.click(buttons[buttons.length - 1]) // le dernier est celui du menu « Plus »
+        expect(screen.getByRole('alertdialog', { name: 'Se déconnecter ?' })).toBeInTheDocument()
+        expect(localStorage.getItem('token')).toBe('abc')
+    })
 })

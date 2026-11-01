@@ -222,3 +222,19 @@
 
 .home .card { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
 .home-sub { text-shadow: 0 1px 10px rgba(3, 6, 12, .9); } /* sous-titre lisible sur les rayons */
+
+/* Cartes sans contour : le fond en verre suffit à les distinguer */
+.home .card {
+  border-color: transparent;   /* transparent plutôt que 0 : la taille des cartes ne bouge pas d'un pixel */
+  box-shadow: none;
+}
+.home .card::before { display: none; }                      /* filet lumineux en haut des cartes */
+.home .card:hover { border-color: transparent; box-shadow: none; }
+
+/* Moins de traits à l'intérieur des cartes */
+.asset-list li + li { border-top: 0; }
+.badge { border-color: transparent; background: rgba(159, 196, 255, .1); }
+
+/* Seule exception : un arrêt d'urgence doit se voir, on garde un anneau rouge */
+.home .engine--off { box-shadow: inset 0 0 0 1px rgba(255, 141, 153, .4); }
+.home .card { background: rgba(14, 22, 40, .62);}
