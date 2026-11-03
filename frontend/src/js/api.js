@@ -44,4 +44,7 @@ export const api = {
   get: (path) => request(path),
   post: (path, body) => request(path, { method: "POST", body }),
   me: () => request("/auth/me"),
+  // Profil et sécurité (endpoints à créer côté backend)
+  updateProfile: ({ name, surname }) => request("/auth/me", { method: "PATCH", body: { name, surname } }),
+  changePassword: (currentPassword, newPassword) => request("/auth/change-password", { method: "POST", body: { current_password: currentPassword, new_password: newPassword } }),
 };

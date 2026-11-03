@@ -8,8 +8,10 @@ import ResetPassword from './authentication/ResetPassword'
 import VerifyCode from './authentication/VerifyCode'
 import Layout from './components/Layout'
 import Home from './pages/Home'
+import Settings from './pages/Settings'
+
 import {
-  Assets, AssetDetail, Algorithms, AlgorithmDetail, Trades, Stats, Funds, Settings,
+  Assets, AssetDetail, Algorithms, AlgorithmDetail, Trades, Stats, Funds,
 } from './pages/PlaceHolders'
 
 function Private({ children }) {

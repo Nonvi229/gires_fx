@@ -160,3 +160,11 @@ td { border-top-color: rgba(190, 215, 255, .08); }
 @media (prefers-reduced-motion: reduce) {
   .bg *, .auth-card, .logo__cross { animation: none !important; }
 }
+
+/* Préférence « Réduire les animations » (page Paramètres) */
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation: none !important;
+  transition: none !important;
+}

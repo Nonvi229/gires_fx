@@ -17,8 +17,9 @@ from app.core.security import (
 from app.models.verification_code import CodePurpose
 from app.repositories.trader_repository import TraderRepository
 from app.repositories.verification_code_repository import VerificationCodeRepository
-from app.schemas.auth import LoginIn, RegisterIn, VerifyEmailIn
 from app.services.email_service import send_already_registered_email, send_verification_email
+from app.models.trader import Trader
+from app.schemas.auth import ChangePasswordIn, LoginIn, RegisterIn, UpdateProfileIn, VerifyEmailIn
 
 RESEND_COOLDOWN = timedelta(seconds=30)
 
@@ -130,4 +131,26 @@ def login(db: Session, data: LoginIn) -> str:
     if not trader.is_verified:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Compte non vérifié. Validez d’abord votre email.")
 
+    return create_access_token(str(trader.id), trader.password_hash)
+
+def update_profile(db: Session, trader: Trader, data: UpdateProfileIn) -> Trader:
+    trader.name = data.name
+    trader.surname = data.surname
+    db.commit()
+    db.refresh(trader)
+    return trader
+
+
+def change_password(db: Session, trader: Trader, data: ChangePasswordIn) -> str:
+    if not verify_password(data.current_password, trader.password_hash):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Mot de passe actuel incorrect")
+    if data.new_password == data.current_password:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST, "Le nouveau mot de passe doit être différent de l’actuel"
+        )
+
+    trader.password_hash = hash_password(data.new_password)
+    db.commit()
+
+    # Le jeton est lié au hash : on en émet un nouveau pour que la session courante reste valide
     return create_access_token(str(trader.id), trader.password_hash)

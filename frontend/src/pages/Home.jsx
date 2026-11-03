@@ -7,8 +7,7 @@ import '../css/Home.css'
 import EnginePanel from '../components/EnginePanel'
 import { useEngine } from '../js/engine'
 
-const reducedMotion = () =>
-  typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+const reducedMotion = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
 // Compteur animé (désactivé si l'utilisateur réduit les animations)
 function useCountUp(target, duration = 1200) {

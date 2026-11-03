@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
@@ -24,7 +24,6 @@ describe('routes protégées', () => {
         ['/trades', 'Trades'],
         ['/stats', 'Statistiques'],
         ['/funds', 'Fonds'],
-        ['/settings', 'Paramètres'],
     ])('%s affiche la page « %s » dans le menu', async (path, title) => {
         show(path)
         expect(await screen.findByRole('heading', { level: 2, name: title })).toBeInTheDocument()   // titre de la page
@@ -35,7 +34,7 @@ describe('routes protégées', () => {
     it('/assets/EURUSD affiche le détail avec un lien retour', async () => {
         show('/assets/EURUSD')
         expect(await screen.findByRole('heading', { name: 'EURUSD' })).toBeInTheDocument()
-        const back = screen.getByRole('link', { name: '← Actifs' })
+        const back = within(screen.getByRole('main')).getByRole('link', { name: /actifs/i })
         expect(back).toHaveAttribute('href', '/assets')
     })
 

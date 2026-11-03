@@ -1,5 +1,9 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from typing import Annotated
+from pydantic import BaseModel, EmailStr, Field, StringConstraints, field_validator
 import uuid
+
+# Les espaces sont retirés AVANT le contrôle de longueur (« A  » est refusé)
+PersonName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=100)]
 
 class LoginIn(BaseModel):
     email: EmailStr
@@ -38,3 +42,12 @@ class MessageOut(BaseModel):
 
 class ResendIn(BaseModel):
     email: EmailStr
+
+class UpdateProfileIn(BaseModel):
+    name: PersonName
+    surname: PersonName
+
+
+class ChangePasswordIn(BaseModel):
+    current_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=8, max_length=128)  # mêmes règles que RegisterIn
