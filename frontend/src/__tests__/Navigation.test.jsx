@@ -23,7 +23,6 @@ describe('routes protégées', () => {
         ['/algorithms', 'Algorithmes'],
         ['/trades', 'Trades'],
         ['/stats', 'Statistiques'],
-        ['/funds', 'Fonds'],
     ])('%s affiche la page « %s » dans le menu', async (path, title) => {
         show(path)
         expect(await screen.findByRole('heading', { level: 2, name: title })).toBeInTheDocument()   // titre de la page

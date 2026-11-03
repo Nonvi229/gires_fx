@@ -9,9 +9,10 @@ import VerifyCode from './authentication/VerifyCode'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Settings from './pages/Settings'
+import Funds from './pages/Funds'
 
 import {
-  Assets, AssetDetail, Algorithms, AlgorithmDetail, Trades, Stats, Funds,
+  Assets, AssetDetail, Algorithms, AlgorithmDetail, Trades, Stats,
 } from './pages/PlaceHolders'
 
 function Private({ children }) {

@@ -22,6 +22,7 @@ describe('Layout : titre de page dans l’en-tête', () => {
     ['/assets/EURUSD', 'Actifs'],
     ['/algorithms/42', 'Algorithmes'],
     ['/stats', 'Statistiques'],
+    ['/funds', 'Fonds']
   ])('%s affiche « %s »', (path, title) => {
     renderAt(path)
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(title)

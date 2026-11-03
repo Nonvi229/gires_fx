@@ -48,3 +48,8 @@ export function fmtAgo(iso, now = Date.now()) {
   if (abs < 86400) return F_RTF.format(Math.round(s / 3600), 'hour')
   return F_RTF.format(Math.round(s / 86400), 'day')
 }
+
+const F_DATETIME = new Intl.DateTimeFormat('fr-FR', {
+  day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+})
+export const fmtDateTime = (iso) => F_DATETIME.format(new Date(iso))

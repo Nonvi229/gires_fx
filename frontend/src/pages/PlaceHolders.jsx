@@ -22,4 +22,3 @@ export const AlgorithmDetail = () => {
 }
 export const Trades = () => <Soon title="Trades" text="Historique complet, filtres et export." />
 export const Stats = () => <Soon title="Statistiques" text="Gains, pertes, investissement et actifs tradés depuis le début." />
-export const Funds = () => <Soon title="Fonds" text="Dépôts, retraits et capital investi." />
